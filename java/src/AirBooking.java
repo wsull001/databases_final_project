@@ -499,7 +499,7 @@ public class AirBooking{
 		try {
 			System.out.print("Please enter the flight number: ");
 			String flight = in.readLine();
-			List<List<String>> result1 = esql.executeQueryAndReturnResult("SELECT seats FROM Flight WHERE flightNum = '" + flight.strip() + "';";
+			List<List<String>> result1 = esql.executeQueryAndReturnResult("SELECT seats FROM Flight WHERE flightNum = '" + flight + "';");
 			if (result1.size() == 0) {
 				System.out.println("ERROR: flight not found");
 				return;
@@ -508,7 +508,7 @@ public class AirBooking{
 			System.out.print("Please enter the date of the flight (YYYY-MM-DD): ");
 			String day = in.readLine();
 			int books = esql.executeQuery("SELECT * FROM Booking WHERE departure = '" + day + "' AND flightNum = '" + flight + "';");
-			System.out.print("There are " + seats - books + " available seats");
+			System.out.print("There are " + (seats - books) + " available seats");
 			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
