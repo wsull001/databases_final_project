@@ -464,6 +464,17 @@ public class AirBooking{
 	
 	public static void ListHighestRatedRoutes(AirBooking esql){//7
 		//List the k highest rated Routes (i.e. Airline Name, flightNum, Avg_Score)
+		try {
+			System.out.print("Enter the number of highest rated routes you'd like to see: ");
+			int num = Integer.parseInt(in.readLine());
+			List<List<String>> result = esql.executeQueryAndReturnResult("SELECT flightNum, avg(score) FROM Ratings GROUP BY flightNum ORDER BY desc LIMIT " + num + ";");
+			for (int i = 0; i < result.size(); i++) {
+				System.out.print("" + (i+1) + ". ");
+				System.out.println("route: " + result.get(i).get(0));
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	public static void ListFlightFromOriginToDestinationInOrderOfDuration(AirBooking esql){//8
