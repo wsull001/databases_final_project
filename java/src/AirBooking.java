@@ -468,10 +468,40 @@ public class AirBooking{
 	
 	public static void ListFlightFromOriginToDestinationInOrderOfDuration(AirBooking esql){//8
 		//List flight to destination in order of duration (i.e. Airline name, flightNum, origin, destination, duration, plane)
+		try {
+			System.out.print("Please enter the destination: ");
+			String destination = in.readLine();
+			System.out.print("Please enter the origin: ");
+			String origin = in.readLine();
+			List<List<String>> result = esql.executeQueryAndReturnResult("SELECT flightNum, origin, destination, plane, duration FROM Flight WHERE origin = '" + origin + "' AND destination = '" + destination + "' ORDER BY duration;");
+			for (int i = 0; i < result.size(); i++) {
+				System.out.print("" + (i+1) + ". ");
+				System.out.print("origin: " + result.get(i).get(1).trim() + " destination: " + result.get(i).get(2).trim() + " flight number: " + result.get(i).get(0).trim() + " plane: " + result.get(i).get(3).trim() + " duration: " + result.get(i).get(4).trim() + "\n");
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	public static void FindNumberOfAvailableSeatsForFlight(AirBooking esql){//9
 		//
+		try {
+			System.out.print("Please enter the flight number: ");
+			String flight = in.readLine();
+			List<List<String>> result1 = esql.executeQueryAndReturnResult("SELECT seats FROM Flight WHERE flightNum = '" + flight.strip() + "';";
+			if (result1.size() == 0) {
+				System.out.println("ERROR: flight not found");
+				return;
+			}
+			int seats = Integer.parseInt(result1.get(0).get(0));
+			System.out.print("Please enter the date of the flight (YYYY-MM-DD): ");
+			String day = in.readLine();
+			int books = esql.executeQuery("SELECT * FROM Booking WHERE departure = '" + day + "' AND flightNum = '" + flight + "';");
+			System.out.print("There are " + seats - books + " available seats");
+			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 		
 	}
 	
