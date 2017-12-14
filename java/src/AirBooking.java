@@ -467,10 +467,10 @@ public class AirBooking{
 		try {
 			System.out.print("Enter the number of highest rated routes you'd like to see: ");
 			int num = Integer.parseInt(in.readLine());
-			List<List<String>> result = esql.executeQueryAndReturnResult("SELECT flightNum, avg(score) FROM Ratings GROUP BY flightNum ORDER BY desc LIMIT " + num + ";");
+			List<List<String>> result = esql.executeQueryAndReturnResult("SELECT flightNum, avg(score) FROM Ratings GROUP BY flightNum ORDER BY avg(score) DESC LIMIT " + num + ";");
 			for (int i = 0; i < result.size(); i++) {
 				System.out.print("" + (i+1) + ". ");
-				System.out.println("route: " + result.get(i).get(0));
+				System.out.println("route: " + result.get(i).get(0) + " score: " + result.get(i).get(1));
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -508,7 +508,7 @@ public class AirBooking{
 			System.out.print("Please enter the date of the flight (YYYY-MM-DD): ");
 			String day = in.readLine();
 			int books = esql.executeQuery("SELECT * FROM Booking WHERE departure = '" + day + "' AND flightNum = '" + flight + "';");
-			System.out.print("There are " + (seats - books) + " available seats");
+			System.out.println("There are " + (seats - books) + " available seats");
 			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
