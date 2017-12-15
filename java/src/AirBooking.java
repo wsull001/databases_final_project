@@ -329,7 +329,7 @@ public class AirBooking{
 		//Add a new passenger to the database
 	}
 	
-	public static String genRandRef(AirBooking esql) throws SQLException {
+	public static String genRandRef(AirBooking esql) throws SQLException { //generate a new reference number
 		do {
 			String ref = "";
 			for (int i = 0; i < 10; i++) 
@@ -452,7 +452,7 @@ public class AirBooking{
 		try {	
 			System.out.print("Enter the number of most popular destinations you want to see: ");
 			int num = Integer.parseInt(in.readLine());
-			List<List<String>> result = esql.executeQueryAndReturnResult("SELECT destination from Flight GROUP BY destination ORDER BY count(*) LIMIT " + num + ";"); 
+			List<List<String>> result = esql.executeQueryAndReturnResult("SELECT destination from Flight GROUP BY destination ORDER BY count(*) DESC LIMIT " + num + ";"); 
 			for (int i = 0; i < result.size(); i++) {
 				System.out.print("" + (i+1) + ". ");
 				System.out.println("desination: " + result.get(i).get(0));
@@ -470,7 +470,7 @@ public class AirBooking{
 			List<List<String>> result = esql.executeQueryAndReturnResult("SELECT flightNum, avg(score) FROM Ratings GROUP BY flightNum ORDER BY avg(score) DESC LIMIT " + num + ";");
 			for (int i = 0; i < result.size(); i++) {
 				System.out.print("" + (i+1) + ". ");
-				System.out.println("route: " + result.get(i).get(0) + " score: " + result.get(i).get(1));
+				System.out.println("flight number: " + result.get(i).get(0) + " score: " + result.get(i).get(1));
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
