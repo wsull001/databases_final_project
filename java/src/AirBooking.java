@@ -349,6 +349,15 @@ public class AirBooking{
 		} while (true);
 	}
 
+	public static String genRandFlightNum(AirBooking esql) throws SQLException { //generate a new reference number
+		do {
+			String ref = "";
+			for (int i = 0; i < 8; i++) 
+				ref += (char)('A' + (int)(Math.random() * 26));
+			if (esql.executeQuery("SELECT * FROM Booking WHERE bookRef = '" + ref +"';") == 0) return ref;
+		} while (true);
+	}
+
 	public static boolean isValidDate(String inDate) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		sdf.setLenient(false);
@@ -477,7 +486,6 @@ public class AirBooking{
 						return;
 					}
 					airid = Integer.parseInt(result.get(0).get(0));
-					System.out.println(airid);
 				}
 				System.out.print("Would you like to update the origin location of this flight (y/n)? ");
 				boolean updateOrig = (in.readLine().equals("y"));
@@ -524,7 +532,37 @@ public class AirBooking{
 				
 					
 			} else if (choice.contains("insert")) { //insert a new record
-				
+				String airline = "";
+				int airid = -1;
+				System.out.print("Please enter the name of the Airline who runs this flight: ");
+				airline = in.readLine();
+				List<List<String>> result = esql.executeQueryAndReturnResult("SELECT airID FROM Airline WHERE name = '" + airline + "';");
+				if (result.size() == 0) {
+					System.out.println("ERROR: This airline was not found");
+					return;
+				}
+				airid = Integer.parseInt(result.get(0).get(0));
+				System.out.print("Please enter the origin location of the flight: ");
+				String originLoc = in.readLine();
+				System.out.print("Please enter the destination location of the flight: ");
+				String destLoc = in.readLine();
+				System.out.print("Please enter the model of the plane: ");
+				String plane = in.readLine();
+				System.out.print("Please enter the number of seats available on the flight: ");
+				int seats = Integer.parseInt(in.readLine());
+				if (seats < 0 || seats > 500) {
+					System.out.println("ERROR: the number of seats must be between 0 and 500");
+					return;
+				}
+				System.out.print("Please enter the length of the flight in hours: ");
+				int duration = Integer.parseInt(in.readLine());
+				if (duration < 0 || duration > 24) {
+					System.out.println("ERROR: Flight duration must be between 0 and 24 hours");
+					return;
+				}
+				String flightNum = genRandFlightNum(esql);
+				esql.executeUpdate("Insert into Flight(airId, flightNum, origin, destination, plane, seats, duration) VALUES (" + airid + ", '" + flightNum + "', '" + originLoc + "', '" + destLoc + "', '" + plane + "', " + seats + ", " + duration + ");");
+				System.out.println("Congrats, the flight has been created. The flight number is " + flightNum + ". Have a nice day!");
 			} else {
 				System.out.println("Sorry, we didn't understand your input. Try again and please specify whether you would like to update or insert");
 			}
