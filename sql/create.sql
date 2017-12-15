@@ -71,7 +71,7 @@ CREATE TABLE Booking(
 );
 
 CREATE INDEX booking_flight_no_index
-ON Booking USING bdateREE (flightNum, departure); --This will increase search speed for flight on a specific day
+ON Booking USING BTREE (flightNum, departure); --This will increase search speed for flight on a specific day
 
 CREATE INDEX passenger_passport_no_index
 ON Passenger USING BTREE (passNum); --This will increase search speed for finding passengers with a specific passport num
@@ -80,7 +80,7 @@ CREATE INDEX flight_dest_orig_index
 ON Flight USING BTREE (origin, destination); --This will let us search origin and destination pairs much faster
 
 CREATE INDEX ratings_pID_flightNum
-ON Ratings USING BTREE (pID, flightNum) --Quickly check to see if a customer has already rated a flight
+ON Ratings USING BTREE (pID, flightNum); --Quickly check to see if a customer has already rated a flight
 
 
 
