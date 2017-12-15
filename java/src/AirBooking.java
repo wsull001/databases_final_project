@@ -24,6 +24,9 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.ArrayList;
 import java.lang.Math;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * This class defines a simple embedded SQL utility class that is designed to
@@ -314,10 +317,18 @@ public class AirBooking{
 			int pID = esql.getNextPID();
 			System.out.print("Enter the passport number: ");
 			String passNum = in.readLine();
+			if (esql.executeQuery("SELECT * FROM Passenger WHERE passNum = '" + passNum + "';") != 0) {
+				System.out.println("ERROR: This passport number is already registered to a passenger");
+				return;
+			}
 			System.out.print("Enter your customer's full name: ");
 			String fullName = in.readLine();
 			System.out.print("Enter their birth date in the format YYYY-MM-DD: ");
 			String bdate = in.readLine();
+			if (!isValidDate(bdate)) {
+				System.out.println("ERROR: the date you entered isn't a valid date");
+				return;
+			}
 			System.out.print("Enter the country they are from: ");
 			String country = in.readLine();
 			esql.executeUpdate("INSERT INTO Passenger (pID, passNum, fullName, bdate, country) VALUES (" + pID + ", '" + passNum + "', '" 
@@ -336,6 +347,18 @@ public class AirBooking{
 				ref += (char)('A' + (int)(Math.random() * 26));
 			if (esql.executeQuery("SELECT * FROM Booking WHERE bookRef = '" + ref +"';") == 0) return ref;
 		} while (true);
+	}
+
+	public static boolean isValidDate(String inDate) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		sdf.setLenient(false);
+		
+		try {
+			Date d = sdf.parse(inDate);
+		} catch (ParseException e) {
+			return false;
+		}
+		return true;
 	}
 	
 	public static void BookFlight(AirBooking esql){//2
@@ -357,6 +380,10 @@ public class AirBooking{
 			}
 			System.out.print("Please enter the date they would like to fly on (YYYY-MM-DD): ");
 			String date = in.readLine();
+			if (!isValidDate(date)) {
+				System.out.println("ERROR: the date you entered isn't a valid date");
+				return;
+			}
 			esql.executeUpdate("INSERT INTO Booking (bookRef, departure, flightNum, pID) VALUES ('" + ref + "', DATE '" + date + "', '"
 				+ flightNo + "', " + pID + ");");
 			System.out.println("Congrats, you have created a booking. Remember the reference number: " + ref);
@@ -507,6 +534,10 @@ public class AirBooking{
 			int seats = Integer.parseInt(result1.get(0).get(0));
 			System.out.print("Please enter the date of the flight (YYYY-MM-DD): ");
 			String day = in.readLine();
+			if (!isValidDate(day)) {
+				System.out.println("ERROR: the date you entered isn't a valid date");
+				return;
+			}
 			int books = esql.executeQuery("SELECT * FROM Booking WHERE departure = '" + day + "' AND flightNum = '" + flight + "';");
 			System.out.println("There are " + (seats - books) + " available seats");
 			
