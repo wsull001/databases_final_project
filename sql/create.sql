@@ -31,7 +31,7 @@ CREATE TABLE Passenger(
 	passNum CHAR(10) NOT NULL,
 	fullName CHAR(24) NOT NULL,
 	bdate DATE NOT NULL,
-	country CHAR(24) NOT NULL,
+	country CHAR(40) NOT NULL,
 	PRIMARY KEY(pID),
 	UNIQUE(passNum)
 );
@@ -39,8 +39,8 @@ CREATE TABLE Passenger(
 CREATE TABLE Flight(
 	airId INTEGER NOT NULL,
 	flightNum CHAR(8) NOT NULL,
-	origin CHAR(16) NOT NULL,
-	destination CHAR(16) NOT NULL,
+	origin CHAR(40) NOT NULL,
+	destination CHAR(40) NOT NULL,
 	plane CHAR(16) NOT NULL,
 	seats _SEATS NOT NULL,
 	duration _HOURS NOT NULL,

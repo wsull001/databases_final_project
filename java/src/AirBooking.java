@@ -452,7 +452,87 @@ public class AirBooking{
 	
 	public static void InsertOrUpdateRouteForAirline(AirBooking esql){//4
 		//Insert a new route for the airline
-		
+		try {
+			System.out.println("Do you want to insert a new route or update an existing one?");
+			System.out.print("\t");
+			String choice = in.readLine();
+			if (choice.contains("update")) { //update a record
+				System.out.print("Please enter the flight number of the flight you would like to update: ");
+				String flightNum = in.readLine();
+				if (esql.executeQuery("SELECT * FROM Flight WHERE flightNum = '" + flightNum + "';") == 0) {
+					System.out.println("ERROR: The flight could not be found");
+					return;
+				}
+				System.out.print("Would you like to update the airline who offers this flight (y/n)? ");
+				choice = in.readLine();
+				boolean updateAir = (choice.equals("y"));
+				String airline;
+				int airid = -1;
+				if (updateAir) {
+					System.out.print("Please enter the name of the Airline who runs this flight: ");
+					airline = in.readLine();
+					List<List<String>> result = esql.executeQueryAndReturnResult("SELECT airID FROM Airline WHERE name = '" + airline + "';");
+					if (result.size() == 0) {
+						System.out.println("ERROR: This airline was not found");
+						return;
+					}
+					airid = Integer.parseInt(result.get(0).get(0));
+					System.out.println(airid);
+				}
+				System.out.print("Would you like to update the origin location of this flight (y/n)? ");
+				boolean updateOrig = (in.readLine().equals("y"));
+				String originLoc = "";
+				if (updateOrig) {
+					System.out.print("Please enter the name of the updated origin: ");
+					originLoc = in.readLine();
+				}
+				System.out.print("Would you like to alter the destination (y/n)? ");
+				boolean updateDest = (in.readLine().equals("y"));
+				String destLoc = "";
+				if (updateDest) {
+					System.out.print("Please enter the name of the updated destination: ");
+					destLoc = in.readLine();
+				}
+				System.out.print("Would you like to alter the plane model (y/n)? ");
+				boolean updatePlane = (in.readLine().equals("y"));
+				String planeModel = "";
+				int seats = -1;
+				int hours = -1;
+				if (updatePlane) {
+					System.out.print("Please enter the name of the plane mode: ");
+					planeModel = in.readLine();
+					System.out.print("Since you changed the plane model, enter the number of seats on the new plane: ");
+					seats = Integer.parseInt(in.readLine());
+					if (seats < 0 || seats > 500) {
+						System.out.println("ERROR: The number of seats on a plane must be between 0 and 500");
+						return;
+					}
+				}
+				if (updateOrig || updateDest || updatePlane) {
+					System.out.print("Since you've changed some of the flight parameters, enter the new flight time: ");
+					hours = Integer.parseInt(in.readLine());
+					if (hours < 0 || hours > 24) {
+						System.out.println("ERROR: The flight must be between 0 and 24 hours long");
+						return;
+					}
+				}
+				esql.executeUpdate("UPDATE Flight SET " + ((updateAir) ? ("airId = " + airid + ((updateOrig || updateDest || updatePlane) ? ", " : " ")) : "") 
+					+ ((updateOrig) ? ("origin = '" + originLoc + "', ") : "") + ((updateDest) ? ("destination = '" + destLoc + "', ") : "")
+					+ ((updatePlane) ? ("plane = '" + planeModel + "', seats = " + seats + ", ") : "")
+					+ ((updateOrig || updateDest || updatePlane) ? ("duration = " + hours + " ") : "") + "WHERE flightNum = '" + flightNum + "';");
+				System.out.println("Flight " + flightNum + " has been updated.");
+				
+					
+			} else if (choice.contains("insert")) { //insert a new record
+				
+			} else {
+				System.out.println("Sorry, we didn't understand your input. Try again and please specify whether you would like to update or insert");
+			}
+			
+		}
+		catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	public static void ListAvailableFlightsBetweenOriginAndDestination(AirBooking esql) throws Exception{//5
